@@ -4,8 +4,9 @@ const { validator_isEmpty } = require('../modals/validator');
 const { defaultResponse } = require('../modals/defaultResponse');
 const { ObjectId, MongoClient } = require('mongodb');
 const multer = require('multer');
+const handleDelete = require('../modals/handleDelete');
 
-const MONGODB_URL = "mongodb+srv://igymproject:YhsPQfKjB2AmOBaJ@cluster0.7mbph.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+const MONGODB_URL = process.env.MONGO_URL;
 
 exports.add_staff = function(req, res){
 
@@ -197,6 +198,7 @@ exports.get_staff = function(req, res){
                 }
                 let result = await mdb.collection("staff").find(query).toArray();
 
+                db.close();
                 defaultResponse(res, 200, true, result);
             
             }
@@ -370,30 +372,11 @@ exports.patch_staff = function(req, res){
     
 }
 
-exports.delete_staff = function(req, res){
+exports.delete_staff = async function(req, res){
 
     try {
 
-        MongoClient.connect(MONGODB_URL, async function(err, db) {
-            if (err){
-                console.error(err);
-                defaultResponse(res, 500, false, "Internal Server Error.");
-                return;
-            } else {
-
-                var mdb = db.db("igym");
-
-                var query = {
-                    _id: ObjectId(req.body.id)
-                }
-
-                await mdb.collection("staff").deleteOne(query);
-                db.close();
-
-                defaultResponse(res, 200, true, "Success.");
-
-            }
-        });
+        await handleDelete(req, res, "staff");
 
     } catch (err) {
         console.error(err);
