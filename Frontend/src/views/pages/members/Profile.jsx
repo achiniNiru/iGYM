@@ -5,8 +5,9 @@ import { useStateValue } from '../../../store/StateProvider';
 import { actionTypes } from '../../../store/reducer';
 
 function Member_Profile(props) {
-    const { data } = props
+    const { data, packages } = props
     const [{ token }, dispatch] = useStateValue();
+    const [data_packages, setData_packages] = useState([]);
     function setLoading(state) {
         dispatch({
             type: actionTypes.SET_LOADING,
@@ -14,7 +15,20 @@ function Member_Profile(props) {
         });
     }
 
+    let date_of_birth = new Date(data?.dob).toLocaleDateString();
+
     useEffect(() => {
+        let memberPkgs = Object.entries(data.packages).map((item) => {
+            if(item[1]===true){
+                let currentPkg = packages.find((pkg)=>{
+                    return pkg._id === item[0]
+                })
+                if(currentPkg !== undefined && currentPkg !== null){
+                    return currentPkg;
+                }
+            }
+        })
+        setData_packages(memberPkgs);
         setLoading(false);
     }, [])
 
@@ -43,7 +57,7 @@ function Member_Profile(props) {
                         </Box>
                         <Box sx={{ my: 1.5 }}>
                             <Typography variant="caption" component="span">Birth Day</Typography>
-                            <Typography variant="body1" component="h6">{data?.dob}</Typography>
+                            <Typography variant="body1" component="h6">{date_of_birth}</Typography>
                         </Box>
                     </Grid>
                     <Grid item xs={12} md={6}>
@@ -69,6 +83,15 @@ function Member_Profile(props) {
                         </Box>
                     </Grid>
                 </Grid>
+            </Box>
+            <Box>
+                <Box sx={{ my: 1.5 }}>
+                    <Typography variant="caption" component="span">Assigned Packages</Typography>
+                    {data_packages.map((item) => {
+                        return <Typography key={item?._id} variant="body1" component="h6" sx={{ml:2}}>{item?.title}</Typography>
+                    })}
+                    
+                </Box>
             </Box>
             <Box sx={{ display: "flex", justifyContent: "flex-end", mt:3 }}>
                 <Button sx={{ color: 'primary.secondary' }} onClick={()=>{props.edit();}}>Edit</Button>
