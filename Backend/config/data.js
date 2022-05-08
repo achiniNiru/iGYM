@@ -1,4 +1,4 @@
-exports.MONGODB_URL = "mongodb+srv://igymproject:YhsPQfKjB2AmOBaJ@cluster0.7mbph.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+exports.MONGODB_URL = process.env.MONGO_URL;
 
 //mongodb
 //igymproject - YhsPQfKjB2AmOBaJ
