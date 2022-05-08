@@ -1,5 +1,5 @@
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, FormControl, FormControlLabel, FormLabel, Grid, IconButton, Modal, Paper, Radio, RadioGroup, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TextField, Typography } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -12,6 +12,9 @@ import { actionTypes } from '../../../store/reducer';
 import { useStateValue } from '../../../store/StateProvider';
 import { validator_isEmpty } from '../../../utils/validator';
 import getAge from '../../../utils/GetAge';
+
+import { useReactToPrint } from 'react-to-print';
+import PrintIcon from '@mui/icons-material/Print';
 
 function Goals_Add(props) {
     const { member } = props;
@@ -100,10 +103,10 @@ function Goals_Add(props) {
                 </Grid>
                 <Grid item xs={12} md={6}>
                     <Box sx={{ my: 2 }}>
-                        <TextField type="number" fullWidth value={input_height} onChange={(e) => { setInput_height(e.target.value) }} label="Height" variant="outlined" />
+                        <TextField type="number" fullWidth value={input_height} onChange={(e) => { setInput_height(e.target.value) }} label="Height (cm)" variant="outlined" />
                     </Box>
                     <Box sx={{ my: 2 }}>
-                        <TextField type="number" fullWidth value={input_weight} onChange={(e) => { setInput_weight(e.target.value) }} label="Weight" variant="outlined" />
+                        <TextField type="number" fullWidth value={input_weight} onChange={(e) => { setInput_weight(e.target.value) }} label="Weight (kg)" variant="outlined" />
                     </Box>
                 </Grid>
             </Grid>
@@ -211,10 +214,10 @@ function Modal_Edit(props) {
                     </Grid>
                     <Grid item xs={12} md={6}>
                         <Box sx={{ my: 2 }}>
-                            <TextField fullWidth value={input_height} onChange={(e) => { setInput_height(e.target.value) }} label="Height" variant="outlined" />
+                            <TextField fullWidth value={input_height} onChange={(e) => { setInput_height(e.target.value) }} label="Height (cm)" variant="outlined" />
                         </Box>
                         <Box sx={{ my: 2 }}>
-                            <TextField fullWidth value={input_weight} onChange={(e) => { setInput_weight(e.target.value) }} label="Weight" variant="outlined" />
+                            <TextField fullWidth value={input_weight} onChange={(e) => { setInput_weight(e.target.value) }} label="Weight (kg)" variant="outlined" />
                         </Box>
                     </Grid>
                 </Grid>
@@ -287,7 +290,7 @@ function Modal_Delete(props) {
             </DialogTitle>
             <DialogContent>
                 <DialogContentText id="alert-dialog-description">
-                    Deleting a designation will result in permanent loss of data about the member's goal. this action cannot be undone.
+                    Deleting a goal will result in permanent loss of data about the member's goal. this action cannot be undone.
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
@@ -301,10 +304,18 @@ function Modal_Delete(props) {
 }
 
 function Modal_Report(props) {
+    const componentRef = useRef();
+    const handlePrint = useReactToPrint({
+        content: () => componentRef.current,
+    });
+    
     const { data, member } = props;
     const [{ token }, dispatch] = useStateValue();
     const [data_loaded, setData_loaded] = useState(false);
     const [data_member, setData_member] = useState([]);
+    const [data_height, setData_height] = useState(0);
+    const [data_bmi, setData_bmi] = useState(0);
+
     function setLoading(state) {
         dispatch({
             type: actionTypes.SET_LOADING,
@@ -324,6 +335,11 @@ function Modal_Report(props) {
         if(member){
             setData_member(member);
         }
+        let height = parseFloat(data?.height).toFixed(2)/100;
+        setData_height(height);
+        let bmi = parseFloat(parseFloat(data?.weight)/(data_height*data_height)).toFixed(3)
+        setData_bmi(bmi);
+
     },[props])
 
     return (
@@ -332,8 +348,15 @@ function Modal_Report(props) {
             onClose={() => { props.close(false) }}
             sx={{ display: "flex", justifyContent: "center", alignItems: "center", backdropFilter: "blur(3px)" }}
         >
-            <Box sx={{ width: "100%", maxWidth: "sm", m: { xs: "0 20px", sm: "0 auto" }, background: "white", p: 5, borderRadius: 3 }}>
-                <Typography variant="h6" component="h6" sx={{ textAlign: "center", mb: 2, fontWeight: "bold" }}>Goal Report</Typography>
+            <Box ref={componentRef} sx={{ width: "100%", maxWidth: "sm", m: { xs: "0 20px", sm: "0 auto" }, background: "white", p: 5, borderRadius: 3 }}>
+                <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                    <Typography variant="h6" component="h6" sx={{ textAlign: "center", mb: 2, fontWeight: "bold" }}>Goal Report</Typography>
+                    <Box className="donotprint">
+                        <IconButton onClick={handlePrint}>
+                            <PrintIcon />
+                        </IconButton>
+                    </Box>
+                </Box>
                 <Grid container spacing={{ xs: 0, md: 2 }}>
                     <Grid item xs={12} md={6}>
                         <Typography variant="caption" component="span">Goal</Typography>
@@ -355,7 +378,7 @@ function Modal_Report(props) {
                     <Grid item xs={12} md={4}>
                         <Box sx={{ mt: 1.5 }}>
                             <Typography variant="caption" component="span">Height</Typography>
-                            <Typography variant="body1" component="h6">{data?.height} m</Typography>
+                            <Typography variant="body1" component="h6">{data_height} m</Typography>
                         </Box>
                     </Grid>
                     <Grid item xs={12} md={4}>
@@ -367,11 +390,11 @@ function Modal_Report(props) {
                     <Grid item xs={12} md={4}>
                         <Box sx={{ mt: 1.5 }}>
                             <Typography variant="caption" component="span">BMI</Typography>
-                            <Typography variant="body1" component="h6">{parseInt(data?.weight)/(parseInt(data?.height)*parseInt(data?.height))}</Typography>
+                            <Typography variant="body1" component="h6">{data_bmi}</Typography>
                         </Box>
                     </Grid>
                 </Grid>
-                <Box sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
+                <Box className="donotprint" sx={{ display: "flex", justifyContent: "flex-end", mt: 2 }}>
                     <Button
                         onClick={() => { props.close(false) }}
                         sx={{ mr: 1, color: 'text.secondary' }}
@@ -390,14 +413,17 @@ function Row(props) {
     const [action_edit, setAction_edit] = useState(false);
     const [action_delete, setAction_delete] = useState(false);
 
+    let data_height = parseFloat(row.height).toFixed(2)/100
+    let data_bmi = parseFloat(parseFloat(row.weight)/(data_height*data_height)).toFixed(3)
+
     return (
         <React.Fragment>
             <TableRow sx={{ borderBottom: "unset" }}>
 
                 <TableCell sx={{ borderBottom: "unset" }} component="th" scope="row">{DATA_GOALS[row.goal].label}</TableCell>
-                <TableCell sx={{ borderBottom: "unset" }} align="right">{row.height}</TableCell>
+                <TableCell sx={{ borderBottom: "unset" }} align="right">{data_height}</TableCell>
                 <TableCell sx={{ borderBottom: "unset" }} align="right">{row.weight}</TableCell>
-                <TableCell sx={{ borderBottom: "unset" }} align="right">{parseFloat(parseInt(row.weight)/(parseInt(row.height)*parseInt(row.height))).toFixed(2)}</TableCell>
+                <TableCell sx={{ borderBottom: "unset" }} align="right">{data_bmi}</TableCell>
                 <TableCell sx={{ borderBottom: "unset" }} align="right">{new Date(row.timestamp).toLocaleDateString()}</TableCell>
                 <TableCell sx={{ borderBottom: "unset" }} align="right">
                     <IconButton onClick={() => { setAction_report(true) }}>
@@ -472,9 +498,9 @@ function Goals_View(props) {
                     <TableHead>
                         <TableRow>
                             <TableCell>Goal</TableCell>
-                            <TableCell align="right">Height</TableCell>
-                            <TableCell align="right">Weight</TableCell>
-                            <TableCell align="right">BMI</TableCell>
+                            <TableCell align="right">Height(m)</TableCell>
+                            <TableCell align="right">Weight(kg)</TableCell>
+                            <TableCell align="right">BMI(kg m<sup>-2</sup>)</TableCell>
                             <TableCell align="right">Created on</TableCell>
                             <TableCell align="right">Actions</TableCell>
                         </TableRow>
@@ -504,7 +530,7 @@ function Goals(props) {
     return (
         <Paper elevation={0} sx={{ width: '100%', maxWidth: "md", background: "white", p: 5, borderRadius: 3, m: { xs: "3rem 20px", md: "3rem auto" }, height: "70vh" }}>
             <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                <Typography variant="subtitle1" sx={{ color: 'text.secondary' }} component="h6">User One Name</Typography>
+                <Typography variant="subtitle1" sx={{ color: 'text.secondary' }} component="h6">{member.name}</Typography>
                 <Button sx={{ color: 'text.secondary' }} onClick={() => { setLoading(true); props.switchView(false) }}>Back to profile</Button>
             </Box>
 

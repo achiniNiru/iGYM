@@ -31,6 +31,9 @@ import { AxiosGet, AxiosDelete } from '../../../config/Axios';
 import { BACKEND_URL } from '../../../config/data';
 import Staff_Edit from './Edit';
 
+import { useReactToPrint } from 'react-to-print';
+import PrintIcon from '@mui/icons-material/Print';
+
 function Modal_Edit(props) {
     const [, dispatch] = useStateValue();
     return (
@@ -109,6 +112,10 @@ function Modal_Delete(props) {
 }
 
 function Modal_Report(props) {
+    const componentRef = useRef();
+    const handlePrint = useReactToPrint({
+        content: () => componentRef.current,
+    });
     const { data } = props;
 
     return (
@@ -117,8 +124,15 @@ function Modal_Report(props) {
             onClose={() => { props.close(false) }}
             sx={{ display: "flex", justifyContent: "center", alignItems: "center", backdropFilter: "blur(3px)" }}
         >
-            <Box sx={{ width: "100%", maxWidth: "sm", m: {xs:"0 20px", sm:"0 auto"}, background: "white", p: 5, borderRadius: 3 }}>
-                <Typography variant="h6" component="h6" sx={{textAlign: "center", mb:2, fontWeight: "bold"}}>GYM staff</Typography>
+            <Box ref={componentRef} sx={{ width: "100%", maxWidth: "sm", m: {xs:"0 20px", sm:"0 auto"}, background: "white", p: 5, borderRadius: 3 }}>
+                <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+                    <Typography variant="h6" component="h6" sx={{textAlign: "center", mb:2, fontWeight: "bold"}}>GYM staff</Typography>
+                    <Box className="donotprint">
+                        <IconButton onClick={handlePrint}>
+                            <PrintIcon />
+                        </IconButton>
+                    </Box>
+                </Box>
                 <Grid container spacing={{ xs: 0, md: 2 }}>
                     <Grid item xs={12} md={6}>
                         <Box>
@@ -145,7 +159,7 @@ function Modal_Report(props) {
                         </Box>
                     </Grid>
                 </Grid>
-                <Box sx={{ display:"flex", justifyContent: "flex-end", mt:2 }}>
+                <Box className="donotprint" sx={{ display:"flex", justifyContent: "flex-end", mt:2 }}>
                     <Button
                         onClick={() => { props.close(false) }}
                         sx={{ mr: 1, color: 'text.secondary' }}
@@ -293,12 +307,12 @@ function Member_Profile(props) {
                     <TableHead>
                         <TableRow>
                             <TableCell />
-                            <TableCell>Image</TableCell>
-                            <TableCell>Full Name</TableCell>
-                            <TableCell align="right">Center</TableCell>
-                            <TableCell align="right">Gender</TableCell>
-                            <TableCell align="right">Designation</TableCell>
-                            <TableCell align="right">Active</TableCell>
+                            <TableCell sx={{color:"primary.main"}}>Image</TableCell>
+                            <TableCell sx={{color:"primary.main"}}>Full Name</TableCell>
+                            <TableCell sx={{color:"primary.main"}} align="right">Center</TableCell>
+                            <TableCell sx={{color:"primary.main"}} align="right">Gender</TableCell>
+                            <TableCell sx={{color:"primary.main"}} align="right">Designation</TableCell>
+                            <TableCell sx={{color:"primary.main"}} align="right">Active</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>

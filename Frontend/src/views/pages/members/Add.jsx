@@ -9,9 +9,10 @@ import { useStateValue } from '../../../store/StateProvider';
 import { actionTypes } from '../../../store/reducer';
 import { DATA_GENDERS } from '../../../config/data';
 import validator from 'validator'
-import { validator_isEmpty } from '../../../utils/validator';
+import { isValidDate, validator_isEmpty } from '../../../utils/validator';
 import Axios, { AxiosGet, AxiosPost } from '../../../config/Axios';
 import { useNavigate } from 'react-router-dom';
+import { DesktopDatePicker } from '@mui/x-date-pickers/DesktopDatePicker';
 
 function Member_Add(props) {
     const [{ token }, dispatch] = useStateValue();
@@ -56,7 +57,7 @@ function Member_Add(props) {
     const [input_image, setInput_image] = useState("");
     const [input_image_blob, setInput_image_blob] = useState("");
     const [input_name, setInput_name] = useState("");
-    const [input_birthday, setInput_birthday] = useState("");
+    const [input_birthday, setInput_birthday] = useState(null);
     const [input_mobileNo, setInput_mobileNo] = useState("");
     const [input_email, setInput_email] = useState("");
     const [input_nic, setInput_nic] = useState("");
@@ -68,13 +69,13 @@ function Member_Add(props) {
 
         if (validator_isEmpty(input_name)) {
             ShowSnakBar("warning", "Please enter a valid name.");
-        } else if (validator_isEmpty(input_birthday) || validator.toDate(input_birthday) === null) {
+        } else if (!isValidDate(input_birthday)) {
             ShowSnakBar("warning", "Please enter a valid Date of Birth.");
-        } else if (validator_isEmpty(input_mobileNo) || !validator.isMobilePhone(input_mobileNo)) {
+        } else if (validator_isEmpty(input_mobileNo) || !validator.isMobilePhone(input_mobileNo,'si-LK')) {
             ShowSnakBar("warning", "Please enter a valid phone number.");
         } else if (validator_isEmpty(input_email) || !validator.isEmail(input_email)) {
             ShowSnakBar("warning", "Please enter a valid email address.");
-        } else if (validator_isEmpty(input_nic) || !validator.isIdentityCard(input_nic, 'any')) {
+        } else if (validator_isEmpty(input_nic) || !validator.isIdentityCard(input_nic, 'LK')) {
             ShowSnakBar("warning", "Please enter a valid NIC.");
         } else if (validator_isEmpty(input_gender)) {
             ShowSnakBar("warning", "Please select a valid gender.");
@@ -101,6 +102,7 @@ function Member_Add(props) {
                 ShowSnakBar("success", "Successfully added a new member");
                 window.location.reload();
             } catch (err) {
+                console.log(err);
                 if (err.response.data.error) {
                     ShowSnakBar("error", err.response.data.error);
                 } else {
@@ -187,7 +189,15 @@ function Member_Add(props) {
                                     <TextField value={input_name} onChange={(e) => { setInput_name(e.target.value) }} fullWidth label="Name" variant="outlined" />
                                 </Box>
                                 <Box sx={{ my: 1 }}>
-                                    <TextField value={input_birthday} onChange={(e) => { setInput_birthday(e.target.value) }} fullWidth label="Birthday" variant="outlined" type="date" />
+                                    <DesktopDatePicker
+                                        label="Birthday"
+                                        inputFormat="MM/dd/yyyy"
+                                        value={input_birthday}
+                                        onChange={(value) => {
+                                            setInput_birthday(value)
+                                        }}
+                                        renderInput={(params) => <TextField fullWidth {...params} />}
+                                    />
                                 </Box>
                             </Grid>
                             <Grid item xs={12} md={6}>

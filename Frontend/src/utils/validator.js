@@ -13,3 +13,7 @@ export function validator_isEmpty(data) {
 export function validator_isFloat(n){
     return /[\.]/.test(String(n));
 }
+
+export function isValidDate(d) {
+    return (new Date(d) !== "Invalid Date") && !isNaN(new Date(d));
+}

@@ -151,7 +151,7 @@ function Members_Edit(props) {
                 <React.Fragment>
                     <Paper variant="outlined" sx={{ p: 5, maxWidth: "md", m: "3rem auto" }}>
                         <Typography variant="h6" sx={{ textAlign: "center", mb: 2 }} component="h4">
-                            Add a new member
+                            Update member details
                         </Typography>
                         <Grid container spacing={{ xs: 0, md: 2 }}>
                             <Grid item xs={12} md={6}>

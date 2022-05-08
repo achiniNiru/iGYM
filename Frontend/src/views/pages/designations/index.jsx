@@ -5,11 +5,11 @@ import Box from '@mui/material/Box';
 import { useStateValue } from '../../../store/StateProvider';
 import { actionTypes } from '../../../store/reducer';
 
-import Member_View from './view';
-import Member_Add from './Add';
+import Package_View from './view';
+import Package_Add from './Add';
 
-function Members() {
-  const [, dispatch] = useStateValue();
+function Designation() {
+  const [{token}, dispatch] = useStateValue();
   const [value, setValue] = useState(0);
 
   const handleChange = (event, newValue) => {
@@ -24,19 +24,19 @@ function Members() {
     <Box sx={{ width: '100%' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={value} onChange={handleChange}>
-          <Tab label="View Members" />
-          <Tab label="Add Member" />
+          <Tab label="View Designation" />
+          <Tab label="Add New Designation" />
         </Tabs>
       </Box>
       <Box sx={{ p: 3 }}>
         {value === 1 ? (
-          <Member_Add tabFunction={setValue} />
+          <Package_Add tabFunction={setValue}/>
         ) : (
-          <Member_View tabFunction={setValue} />
+          <Package_View tabFunction={setValue}/>
         )}
       </Box>
     </Box>
   )
 }
 
-export default Members
+export default Designation

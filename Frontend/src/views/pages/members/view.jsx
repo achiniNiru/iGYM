@@ -143,6 +143,7 @@ function Modal_Profile(props) {
                     edit={handleEdit}
                     delete={handleDelete}
                     data={props?.data}
+                    packages={props?.packages}
                 />
             )}
         </Modal>
@@ -183,7 +184,7 @@ function Row(props) {
 
             <Modal_Edit tabFunction={props.tabFunction} open={action_edit} close={setAction_edit} data={row} packages={packages} />
             <Modal_Delete open={action_delete} close={setAction_delete} data={row} />
-            <Modal_Profile open={action_Profile} close={setAction_Profile} edit={setAction_edit} delete={setAction_delete} data={row} />
+            <Modal_Profile open={action_Profile} close={setAction_Profile} edit={setAction_edit} delete={setAction_delete} packages={packages} data={row} />
 
         </TableRow>
     );
@@ -243,11 +244,11 @@ function Member_View(props) {
                     <TableHead>
                         <TableRow>
                             <TableCell />
-                            <TableCell>Name</TableCell>
-                            <TableCell align="right">Admission Number</TableCell>
-                            <TableCell align="right">ID Number</TableCell>
-                            <TableCell align="right">Email</TableCell>
-                            <TableCell align="right">Action</TableCell>
+                            <TableCell sx={{color:"primary.main"}}>Name</TableCell>
+                            <TableCell sx={{color:"primary.main"}} align="right">Admission Number</TableCell>
+                            <TableCell sx={{color:"primary.main"}} align="right">ID Number</TableCell>
+                            <TableCell sx={{color:"primary.main"}} align="right">Email</TableCell>
+                            <TableCell sx={{color:"primary.main"}} align="right">Action</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>

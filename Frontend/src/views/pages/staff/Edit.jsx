@@ -116,7 +116,7 @@ function Staff_Edit(props) {
             setLoading(true);
             try {
                 const req = await AxiosPatch("/staff", token, formData, { formData: true });
-                ShowSnakBar("success", "Successfully added a new staff");
+                ShowSnakBar("success", "Staff member updated successfully");
                 window.location.reload();
             } catch (err) {
                 if (err.response.data.error) {
