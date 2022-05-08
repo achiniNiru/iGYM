@@ -1,11 +1,12 @@
 require('dotenv').config();
 const validator = require('validator');
-const { validator_isEmpty } = require('../modals/validator');
+const { validator_isEmpty, validator_isDate } = require('../modals/validator');
 const { defaultResponse } = require('../modals/defaultResponse');
 const { ObjectId, MongoClient } = require('mongodb');
 const multer = require('multer');
+const handleDelete = require('../modals/handleDelete');
 
-const MONGODB_URL = "mongodb+srv://igymproject:YhsPQfKjB2AmOBaJ@cluster0.7mbph.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+const MONGODB_URL = process.env.MONGO_URL;
 
 exports.add_member = async function(req, res) {
     
@@ -81,7 +82,7 @@ exports.add_member = async function(req, res) {
             } else if(validator_isEmpty(req.body.name)){
                 defaultResponse(res, 403, false, "Please enter a valid name.");
                 return;
-            } else if(validator_isEmpty(req.body.dob) || validator.toDate(req.body.dob) === null){
+            } else if(!validator_isDate(req.body.dob)){
                 defaultResponse(res, 403, false, "Please enter a valid Date of Birth.");
                 return;
             } else if(validator_isEmpty(req.body.phone) || !validator.isMobilePhone(req.body.phone)){
@@ -110,6 +111,11 @@ exports.add_member = async function(req, res) {
 
                         var mdb = db.db("igym");
 
+                        let dob = new Date(req.body.dob);
+                        let dob_month = String(dob.getMonth()+1).padStart(2, '0');
+                        let dob_date = String(dob.getDate()).padStart(2, '0');
+                        let dob_string = dob.getFullYear()+"-"+dob_month+"-"+dob_date;
+
                         var query = {
                             $or: [
                                 {phone: req.body.phone},
@@ -126,7 +132,7 @@ exports.add_member = async function(req, res) {
                         } else {
                             var query2 = {
                                 name: req.body.name,
-                                dob: req.body.dob,
+                                dob: dob_string,
                                 phone: req.body.phone,
                                 email: req.body.email,
                                 nic: req.body.nic,
@@ -176,6 +182,7 @@ exports.get_member = async function(req, res) {
                 }
                 let result = await mdb.collection("members").find(query).toArray();
 
+                db.close();
                 defaultResponse(res, 200, true, result);
             
             }
@@ -339,26 +346,7 @@ exports.delete_member = async function(req, res) {
             return;
         } else {
 
-            MongoClient.connect(MONGODB_URL, async function(err, db) {
-                if (err){
-                    console.error(err);
-                    defaultResponse(res, 500, false, "Internal Server Error.");
-                    return;
-                } else {
-
-                    var mdb = db.db("igym");
-
-                    var query = {
-                        _id: ObjectId(req.body.id)
-                    }
-
-                    await mdb.collection("members").deleteOne(query);
-                    db.close();
-
-                    defaultResponse(res, 200, true, "Success.");
-
-                }
-            });
+            await handleDelete(req, res, "members");
 
         }
 
