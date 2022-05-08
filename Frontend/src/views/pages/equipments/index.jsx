@@ -5,10 +5,10 @@ import Box from '@mui/material/Box';
 import { useStateValue } from '../../../store/StateProvider';
 import { actionTypes } from '../../../store/reducer';
 
-import View_Calander from './View_Calander';
-import View_Table from './View_Table';
+import Package_View from './view';
+import Package_Add from './Add';
 
-function Schedule() {
+function Equipments() {
   const [{token}, dispatch] = useStateValue();
   const [value, setValue] = useState(0);
 
@@ -24,19 +24,19 @@ function Schedule() {
     <Box sx={{ width: '100%' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={value} onChange={handleChange}>
-          <Tab label="Table View" />
-          <Tab label="Calendar View" />
+          <Tab label="View Equipment" />
+          <Tab label="Add New Equipment" />
         </Tabs>
       </Box>
       <Box sx={{ p: 3 }}>
         {value === 1 ? (
-          <View_Calander tabFunction={setValue}/>
+          <Package_Add tabFunction={setValue}/>
         ) : (
-          <View_Table tabFunction={setValue}/>
+          <Package_View tabFunction={setValue}/>
         )}
       </Box>
     </Box>
   )
 }
 
-export default Schedule
+export default Equipments
