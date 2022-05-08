@@ -24,15 +24,15 @@ function Schedule() {
     <Box sx={{ width: '100%' }}>
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={value} onChange={handleChange}>
-          <Tab label="Calendar View" />
           <Tab label="Table View" />
+          <Tab label="Calendar View" />
         </Tabs>
       </Box>
       <Box sx={{ p: 3 }}>
         {value === 1 ? (
-          <View_Table tabFunction={setValue}/>
-        ) : (
           <View_Calander tabFunction={setValue}/>
+        ) : (
+          <View_Table tabFunction={setValue}/>
         )}
       </Box>
     </Box>
