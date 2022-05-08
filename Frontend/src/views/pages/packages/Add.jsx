@@ -41,12 +41,16 @@ function Package_Add(props) {
     const handleSubmit = async () => {
         try {
 
+            let input_access_keys = Object.keys(input_access);
+
             if(validator_isEmpty(input_title)){
                 ShowSnakBar("warning", "Please enter a valid title for the package.");
             } else if(validator_isEmpty(input_duration)){
                 ShowSnakBar("warning", "Please select a valid duration for the package.");
             } else if(validator_isEmpty(input_fee) || !validator_isFloat(parseFloat(input_fee).toFixed(2))){
-                ShowSnakBar("warning", "Please enter a valid salary.");
+                ShowSnakBar("warning", "Please enter a valid fee.");
+            } else if(!input_access_keys.length > 0){
+                ShowSnakBar("warning", "Please add ad least one Access.");
             } else {
 
                 setLoading(true);
@@ -107,7 +111,11 @@ function Package_Add(props) {
                             </FormControl>
                         </Box>
                         <Box sx={{ my: 1 }}>
-                            <TextField type="number" value={input_fee} onChange={(e) => { setInput_fee(e.target.value) }} fullWidth label="Fee" variant="outlined" />
+                            <TextField value={input_fee} onChange={(e) => { 
+                                if(!isNaN(e.target.value)){
+                                    setInput_fee(e.target.value)
+                                }
+                            }} fullWidth label="Fee (Rs.)" variant="outlined" />
                         </Box>
                     </Grid>
                     <Grid item xs={12} md={6}>
