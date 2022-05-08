@@ -144,9 +144,11 @@ function Row(props) {
 
                                     <Grid item xs={12} md={6}>
                                         <Typography variant="caption" component="p">Access</Typography>
-                                        {Object.keys(row.access).map((key)=>{
-                                            let label = PACKAGE_CLASSES.find((item)=>item.id === key).label;
-                                            return <Typography key={key} variant="subtitle2" component="p" sx={{ml:1}}>{label}</Typography>
+                                        {Object.entries(row.access).map((key)=>{
+                                            if(key[1] === true) {
+                                                let label = PACKAGE_CLASSES.find((item)=>item.id === key[0]).label;
+                                                return <Typography key={key} variant="subtitle2" component="p" sx={{ml:1}}>{label}</Typography>
+                                            }
                                         })}
                                     </Grid>
                                     <Grid item xs={12} sx={{ textAlign: "right" }}>
@@ -216,9 +218,9 @@ function Member_Profile(props) {
                     <TableHead>
                         <TableRow>
                             <TableCell />
-                            <TableCell>Title</TableCell>
-                            <TableCell align="right">Duration</TableCell>
-                            <TableCell align="right">Fee</TableCell>
+                            <TableCell sx={{color:"primary.main"}}>Title</TableCell>
+                            <TableCell sx={{color:"primary.main"}} align="right">Duration</TableCell>
+                            <TableCell sx={{color:"primary.main"}} align="right">Fee(Rs.)</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
