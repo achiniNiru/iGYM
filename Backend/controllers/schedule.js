@@ -3,8 +3,9 @@ const validator = require('validator');
 const { validator_isEmpty } = require('../modals/validator');
 const { defaultResponse } = require('../modals/defaultResponse');
 const { ObjectId, MongoClient } = require('mongodb');
+const handleDelete = require('../modals/handleDelete');
 
-const MONGODB_URL = "mongodb+srv://igymproject:YhsPQfKjB2AmOBaJ@cluster0.7mbph.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+const MONGODB_URL = process.env.MONGO_URL;
 
 
 exports.add_schedule = function(req, res){
@@ -94,6 +95,7 @@ exports.get_schedule = function(req, res){
                 }
                 let result = await mdb.collection("schedule").find(query).toArray();
 
+                db.close();
                 defaultResponse(res, 200, true, result);
             
             }
@@ -165,30 +167,11 @@ exports.patch_schedule = function(req, res){
     
 }
 
-exports.delete_schedule = function(req, res){
+exports.delete_schedule = async function(req, res){
 
     try {
 
-        MongoClient.connect(MONGODB_URL, async function(err, db) {
-            if (err){
-                console.error(err);
-                defaultResponse(res, 500, false, "Internal Server Error.");
-                return;
-            } else {
-
-                var mdb = db.db("igym");
-
-                var query = {
-                    _id: ObjectId(req.body.id)
-                }
-
-                await mdb.collection("schedule").deleteOne(query);
-                db.close();
-
-                defaultResponse(res, 200, true, "Success.");
-
-            }
-        });
+        await handleDelete(req, res, "schedule");
 
     } catch (err) {
         console.error(err);
