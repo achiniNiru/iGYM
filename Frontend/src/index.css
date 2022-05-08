@@ -1,3 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Crete+Round&display=swap');
+
+:root{
+  --primary: rgb(48, 64, 154);
+  --primary-dark: #222437;
+  --primary-varient: rgb(26, 28, 42);
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -13,5 +21,25 @@ code {
 }
 
 .css-i9fmh8-MuiBackdrop-root-MuiModal-backdrop{
+  backdrop-filter: blur(2px) !important;
   background-color: #00000022 !important;
+}
+
+.active-link{
+  border-left: solid 4px white !important;
+  background-color: var(--primary-varient) !important;
+}
+
+.filter-white{
+  filter: invert(100%) sepia(0%) saturate(6443%) hue-rotate(335deg) brightness(108%) contrast(101%);
+}
+
+@media print {
+  .donotprint {
+    display: none !important;
+  }
+}
+
+h1,h2,h3,h4,h5{
+  font-family: 'Crete Round', serif !important;
 }
