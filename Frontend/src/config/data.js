@@ -1,4 +1,5 @@
-//export const BACKEND_URL = "http://localhost:8001/"
+//export const BACKEND_URL = "http://localhost:8001/";
+//export const BACKEND_URL = "http://192.168.43.4:8001/"
 export const BACKEND_URL = "https://igymlk.herokuapp.com/"
 
 export const PACKAGE_CLASSES = [
